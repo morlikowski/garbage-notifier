@@ -1,2 +1,6 @@
-# garbage-notifier
-Serverless solution to text a Telegram group when garbage collection comes
+# Garbage Notifier
+Serverless solution to text a Telegram group when garbage collection comes. Tailored to Bielefeld (Germany) and German text, but might work for other places with slight adaptions.
+
+## Solution Outline
+
+We create a [Google Calendar](https://calendar.google.com), which will hold events for each day garbage is collected. For Bielefeld we get an iCal file from the [municipality's website](https://anwendungen.bielefeld.de/WasteManagementBielefeldTest/WasteManagementServlet?SubmitAction=wasteDisposalServices) which we import. This step has to be repeated every time a new calendar is published. We create a [Google Apps Script](https://script.google.com) project based on the code in `Code.gs` in this repository. The script currently assumes that you only wnat notifications for certain monts (`DUTY_MONTHS`), which you migth want to change. For example, to get notifcations every month you would put `[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]`. We need to configure a *time-based trigger* to check daily if garbage collection is due on the next day. We also configure two *properties* for the script. `CALENDAR_ID` is the identifier for our Google Calendar with the garbage collection dates. `SERVICE_URL` is the endpoint of an *applet* we will create on [IFTT](https://ifttt.com/). On IFTT you can host, as of this writing, up to two applets for free. We create an applet with a "Receive a web request" webhook *trigger* and a "Send message to Telegram" *action*. The action needs some setup where we connect our Telegram account and the (group) chat to which we want to send messages, following instructions by IFTT.
